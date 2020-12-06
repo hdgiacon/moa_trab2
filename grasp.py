@@ -163,7 +163,7 @@ def custo(rota,matriz):    #como o custo é calculado? dist total da rota
     return custo
 
 
-def vizinhanca(solucao_aleatoria):      #N2
+def vizinhanca(solucao_aleatoria):      #N1
     vizinhanca = []
     aux_vizinhanca = []
     aux1 = 0
@@ -204,6 +204,7 @@ def busca_local(solucao_aleatoria, matriz):
 # os S's representam a rota
 #custo final < 44216
 #pode demorar de 5 a 10 minutos
+#custo = distancia
 
 #verifica todos os custos dos vizinhos da rota atual
 #escolhe a rota de menor custo
@@ -217,9 +218,9 @@ def menu():
     print("3- 1000 ciclos")
     print("4- 10000 ciclos")
     print("5- Sair")
-    opcao = input("\nDigite a sua escolha: ")
+    opcao = input("\nDigite a sua escolha: ") #digitar numero
 
-    if opcao == 1:
+    if opcao == 1:      #mudar para o usuario digitar quantas iterações ele quer, sem dar opcoes a ele
         return 10
     elif opcao == 2:
         return 100
@@ -230,7 +231,7 @@ def menu():
     elif opcao == 5:
         return -1
     else:
-        return None
+        print()     #fazer o tratamento
 
 
 def grasp():
@@ -242,10 +243,10 @@ def grasp():
     k = 0
     opcao = menu()
 
-    while k < opcao:
+    while k < 10:       #aparentemente deu loop infinito
         S = aleat_guloso(distancias)     #inserção mais proxima modificada
 
-        S_linha = busca_local(S)
+        S_linha = busca_local(S,distancias)
 
         if flag == True:
             S_estrela = S_linha
@@ -262,9 +263,9 @@ def grasp():
 
 
 #d = aleat_guloso(distancias_ex)
-d = [1,2,3,4]
-vizinhanca(d)
-#grasp()
+#d = [1,2,3,4]
+#vizinhanca(d)
+grasp()     #atribuir os resultados do return, talvez seja isso o "loop infinito"
 
 
 '''
