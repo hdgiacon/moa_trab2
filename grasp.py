@@ -1,5 +1,5 @@
-import csv
 from typing import List
+import csv
 import random
 
 distancias_ex = [      #usar como teste
@@ -16,7 +16,7 @@ distancias_ex = [      #usar como teste
   [18, 12, 13, 25, 22, 37, 84, 13, 18, 38, 0]     
 ]
 
-def extrair_dados():
+def extrair_dados():    #extrai os dados do arquivo .csv
     with open('USCA312.csv', 'r') as arquivo_csv:
         leitor = csv.reader(arquivo_csv, delimiter = ',')
 
@@ -134,25 +134,11 @@ def aleat_guloso(matriz):
             cidades.append(dados[2])
         else:
             cidades.insert(index_menor_custo,dados[2])
-
-        
-        print(cidades)
-
-
-    #calculo do custo total da rota final
-    #for k in range(len(cidades)):      #precisa do calculo do custo?
-    #	if k == len(cidades) - 1:
-    #		custo_total = custo_total + matriz[cidades[k]][0]
-    #	else:
-    #		custo_total = custo_total + matriz[cidades[k]][cidades[k+1]]
-    #
-    #cidades.append(0)
-    #print(cidades)
-    #print("\nCusto total: " + str(custo_total) + "\n")		
+	
     return cidades
 
 
-def custo(rota,matriz):    #como o custo é calculado? dist total da rota
+def custo(rota,matriz):
     custo = 0
     for k in range(len(rota)):
         if k == len(rota) - 1:
@@ -163,7 +149,7 @@ def custo(rota,matriz):    #como o custo é calculado? dist total da rota
     return custo
 
 
-def vizinhanca(solucao_aleatoria):      #N1
+def vizinhanca(solucao_aleatoria):      #estrategia N1
     vizinhanca = []
     aux_vizinhanca = []
     aux1 = 0
@@ -182,28 +168,22 @@ def vizinhanca(solucao_aleatoria):      #N1
 
 
 def busca_local(solucao_aleatoria, matriz):
-    menor_custo = 999999
+    menor_custo = 99999999999
     menor_index = 0
     aux_custo = 0
     vizinhos = vizinhanca(solucao_aleatoria)
-    menor_local = 999999999999
 
-    while menor_custo < menor_local:
-        for i in range(len(vizinhos)):
+    for i in range(len(vizinhos)):
             aux_custo = custo(vizinhos[i],matriz)
             if aux_custo < menor_custo:
                 menor_custo = aux_custo
                 menor_index = i
 
-    return vizinhos[menor_index]
-    #retornar a rota de menor custo
+    return vizinhos[menor_index]    #retornar a rota de menor custo
 
 
-#o que é S*, s e s' ?
 #S*=solucao otima, S=solucao aleatoria, S'= solucao resultante da busca local
 # os S's representam a rota
-#custo final < 44216
-#pode demorar de 5 a 10 minutos
 #custo = distancia
 
 #verifica todos os custos dos vizinhos da rota atual
@@ -211,84 +191,39 @@ def busca_local(solucao_aleatoria, matriz):
 #faz o mesmo processo pra nova rota
 #se nao houver uma rota de menor custo do que atual, retorne essa rota
 
-def menu():
-    print("MENU PARA CONDIÇÃO DE PARADA")
-    print("\n1- 10 ciclos")
-    print("2- 100 ciclos")
-    print("3- 1000 ciclos")
-    print("4- 10000 ciclos")
-    print("5- Sair")
-    opcao = input("\nDigite a sua escolha: ") #digitar numero
-
-    if opcao == 1:      #mudar para o usuario digitar quantas iterações ele quer, sem dar opcoes a ele
-        return 10
-    elif opcao == 2:
-        return 100
-    elif opcao == 3:
-        return 1000
-    elif opcao == 4:
-        return 10000
-    elif opcao == 5:
-        return -1
-    else:
-        print()     #fazer o tratamento
-
 
 def grasp():
-    #distancias = extrair_dados()
+    #distancias = extrair_dados()   # .csv
     distancias = distancias_ex
     custo_final = 0   
     flag = True        #custo(S*) = inf
     
     k = 0
-    opcao = menu()
+    iteracoes = int(input("\nDigite o numero de iterações do GRASP: "))
 
-    while k < 10:       #aparentemente deu loop infinito
+    while k < iteracoes:
         S = aleat_guloso(distancias)     #inserção mais proxima modificada
 
         S_linha = busca_local(S,distancias)
 
-        if flag == True:
+        if flag == True:        #para S_estrela ter um primeiro valor para haver comparação 
             S_estrela = S_linha
             flag = False    
-        elif custo(S_linha,distancias) < custo(S_estrela,distancias):   #fazer o esquema de flag pra ir pelo menos 1 vez
+        elif custo(S_linha,distancias) < custo(S_estrela,distancias):
             S_estrela = S_linha
     
         k += 1
 
-    #fazer o calculo do custo final
+    #calculo do custo final
+    custo_final = custo(S_estrela,distancias)
 
-    return S_estrela, custo_final    #retorna o custo final tambem?
-
-
-
-#d = aleat_guloso(distancias_ex)
-#d = [1,2,3,4]
-#vizinhanca(d)
-grasp()     #atribuir os resultados do return, talvez seja isso o "loop infinito"
+    return S_estrela, custo_final
 
 
-'''
-[5, 1, 10, 8, 4, 6, 2, 7, 0, 9, 3]
-Custo inicial: 342
-Vizinho 0-1 (Custo: 384)
-Vizinho 1-2 (Custo: 350)
-Vizinho 2-3 (Custo: 361)
-Vizinho 3-4 (Custo: 353)
-Vizinho 4-5 (Custo: 356)
-Vizinho 5-6 (Custo: 343)
-Vizinho 6-7 (Custo: 359)
-Vizinho 7-8 (Custo: 347)
-Vizinho 8-9 (Custo: 363)
-Vizinho 9-10 (Custo: 323)
-Recursao
 
-[5, 1, 10, 8, 4, 6, 2, 7, 0, 3, 9]
-Custo inicial: 323
-Vizinho 0-1 (Custo: 386)
-Vizinho 1-2 (Custo: 331)
-Vizinho 2-3 (Custo: 342)
-Vizinho 3-4 (Custo: 334)
-Vizinho 4-5 (Custo: 337)
-Vizinh
-'''
+caminho = []
+custo_f = 0
+
+caminho,custo_f = grasp()
+print(caminho)
+print("Custo: " + str(custo_f))
